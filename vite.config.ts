@@ -2,6 +2,31 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules/@radix-ui")) {
+            return "radix";
+          }
+
+          if (id.includes("node_modules/react-router")) {
+            return "router";
+          }
+
+          if (id.includes("node_modules/react")) {
+            return "react-vendor";
+          }
+
+          if (id.includes("node_modules/@js-temporal")) {
+            return "temporal";
+          }
+
+          return undefined;
+        },
+      },
+    },
+  },
   plugins: [react()],
   resolve: {
     alias: {
