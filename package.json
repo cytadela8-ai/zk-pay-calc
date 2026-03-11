@@ -9,7 +9,9 @@
     "test": "vitest",
     "test:run": "vitest run --passWithNoTests",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint -c .oxlintrc.json --deny-warnings src && oxfmt -c .oxfmtrc.json --check ."
+    "lint": "oxlint -c .oxlintrc.json --deny-warnings src && oxfmt -c .oxfmtrc.json --check .",
+    "deploy": "yarn run build && wrangler deploy",
+    "preview": "yarn run build && wrangler dev"
   },
   "dependencies": {
     "@js-temporal/polyfill": "0.5.1",
@@ -22,6 +24,7 @@
     "react-router-dom": "7.13.1"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.27.0",
     "@testing-library/dom": "10.4.1",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.2",
@@ -34,7 +37,8 @@
     "oxlint": "1.53.0",
     "typescript": "5.9.3",
     "vite": "7.3.1",
-    "vitest": "4.0.18"
+    "vitest": "4.0.18",
+    "wrangler": "^4.72.0"
   },
   "packageManager": "yarn@1.22.22"
 }
