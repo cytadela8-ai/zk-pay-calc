@@ -4,7 +4,9 @@ import type { RawTransfer } from "src/domain/report";
 
 const transferEventSignature = "Transfer(address,address,uint256)";
 const transferTopic = ethers.id(transferEventSignature);
-const transferInterface = new ethers.Interface([`event ${transferEventSignature}`]);
+const transferInterface = new ethers.Interface([
+  "event Transfer(address indexed from, address indexed to, uint256 value)",
+]);
 
 interface FetchIncomingTransfersArgs {
   address: string;
@@ -12,6 +14,17 @@ interface FetchIncomingTransfersArgs {
   tokenAddress: string;
   startEpochSeconds: number;
   endEpochSeconds: number;
+}
+
+interface TransferLogLike {
+  data: string;
+  topics: string[];
+}
+
+interface DecodedTransferLog {
+  amountAtomic: string;
+  from: string;
+  to: string;
 }
 
 async function getRequiredBlock(
@@ -73,6 +86,22 @@ async function findBlockAtOrBefore(
 }
 
 /**
+ * Decodes a standard ERC-20 transfer log.
+ *
+ * @param log - Log data and topics from the RPC provider.
+ * @returns Decoded sender, recipient, and raw token amount.
+ */
+export function decodeTransferLog(log: TransferLogLike): DecodedTransferLog {
+  const parsedLog = transferInterface.parseLog(log);
+
+  return {
+    amountAtomic: parsedLog.args.value.toString(),
+    from: parsedLog.args.from,
+    to: parsedLog.args.to,
+  };
+}
+
+/**
  * Fetches incoming ERC-20 transfers for an address over a timestamp interval.
  *
  * @param args - RPC, token, address, and time range details.
@@ -105,11 +134,10 @@ export async function fetchIncomingTransfers(
       const blockPromise = cachedBlock ?? getRequiredBlock(provider, log.blockNumber);
       blockCache.set(log.blockNumber, blockPromise);
       const block = await blockPromise;
-      const parsedLog = transferInterface.parseLog(log);
-      const amountAtomic = parsedLog.args[2].toString();
+      const decodedLog = decodeTransferLog(log);
 
       return {
-        amountAtomic,
+        amountAtomic: decodedLog.amountAtomic,
         blockNumber: log.blockNumber,
         timestampSeconds: block.timestamp,
         txHash: log.transactionHash,
