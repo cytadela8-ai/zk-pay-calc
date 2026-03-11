@@ -32,7 +32,8 @@ Report generation flow:
 3. Fetch CoinGecko USD samples for the month window.
 4. Fetch NBP USD/PLN archive data covering the month plus a short backward lookback.
 5. Build accountant rows and summary totals with pure functions.
-6. Render the table, summary, and copyable export text.
+6. Persist the last wallet address in local storage for the next visit.
+7. Render progress, the table, summary, and copyable export text.
 
 ## Key decisions
 
@@ -41,6 +42,8 @@ Report generation flow:
 - Warsaw timezone is the source of truth for month boundaries and displayed dates.
 - NBP conversion uses the latest earlier publication date, never the same transaction date.
 - `big.js` is used for decimal-safe currency math.
+- The wallet address is persisted in browser local storage under `zk-pay-calc:last-wallet-address`.
+- Report generation exposes staged progress updates from data fetching through final assembly.
 - Heavy generation logic is lazy-loaded so the initial bundle stays below Vite's warning threshold.
 
 ## Testing
@@ -54,6 +57,6 @@ Report generation flow:
 Current support is intentionally narrow:
 
 - chain: zkSync Era (`chainId` 324)
-- token: ZK (`0x5A7d6b2F92C77FAD6CCAbd7Ee0624E64907eaF3E`)
+- token: ZK (`0x5A7d6b2F92C77FAD6CCaBd7EE0624E64907Eaf3E`)
 
 To add more assets later, extend `src/config/networks.ts` and keep the UI selectors wired to that config.

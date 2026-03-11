@@ -10,6 +10,8 @@ The report:
 - converts USD to PLN using the latest earlier NBP table A USD rate
 - produces per-transfer rows plus a monthly summary
 - provides a copyable plain-text export for accounting records
+- remembers the last used wallet address in browser local storage
+- shows staged progress while the report is loading
 
 ## Stack
 
@@ -64,3 +66,4 @@ yarn build
 - Month boundaries and displayed transaction dates use `Europe/Warsaw`.
 - USD/PLN uses the latest NBP publication before the transaction date.
 - Supported chain and token are currently hardcoded in the app config.
+- The wallet field is restored from local storage between visits in the same browser.

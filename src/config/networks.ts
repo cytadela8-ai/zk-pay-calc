@@ -8,7 +8,7 @@ export const SUPPORTED_NETWORKS: SupportedNetwork[] = [
     rpcUrl: "https://mainnet.era.zksync.io",
     tokens: [
       {
-        address: "0x5A7d6b2F92C77FAD6CCAbd7Ee0624E64907eaF3E",
+        address: "0x5A7d6b2F92C77FAD6CCaBd7EE0624E64907Eaf3E",
         coingeckoCoinId: "zksync",
         decimals: 18,
         symbol: "ZK",

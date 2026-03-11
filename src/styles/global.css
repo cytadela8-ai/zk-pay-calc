@@ -86,8 +86,9 @@ body::before {
 }
 
 .hero-heading {
-  max-width: 12ch;
-  line-height: 0.95;
+  line-height: 1;
+  max-width: none;
+  white-space: nowrap;
 }
 
 .hero-copy,
@@ -183,6 +184,10 @@ body::before {
 }
 
 @media (max-width: 720px) {
+  .hero-heading {
+    white-space: normal;
+  }
+
   .filter-grid {
     grid-template-columns: 1fr;
   }

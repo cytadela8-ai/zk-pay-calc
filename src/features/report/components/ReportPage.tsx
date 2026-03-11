@@ -1,5 +1,5 @@
 import { Container, Flex, Heading, Section, Text } from "@radix-ui/themes";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { SUPPORTED_NETWORKS } from "src/config/networks";
 import type { SupportedToken } from "src/domain/report";
@@ -12,13 +12,23 @@ import { useReportGenerator } from "src/features/report/hooks/useReportGenerator
 import { formatAccountantReport } from "src/features/report/model/exportText";
 import { getPreviousWarsawMonth } from "src/lib/timezone";
 
+const ADDRESS_STORAGE_KEY = "zk-pay-calc:last-wallet-address";
+const MONTH_PATTERN = /^\d{4}-\d{2}$/;
+
 export function ReportPage(): JSX.Element {
   const network = SUPPORTED_NETWORKS[0];
   const token = network.tokens[0] as SupportedToken;
   const [month, setMonth] = useState(getPreviousWarsawMonth());
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState(
+    () => window.localStorage.getItem(ADDRESS_STORAGE_KEY) ?? "",
+  );
   const [addressError, setAddressError] = useState<string | null>(null);
-  const { errorMessage, generate, report, status } = useReportGenerator();
+  const [monthError, setMonthError] = useState<string | null>(null);
+  const { errorMessage, generate, progress, report, status } = useReportGenerator();
+
+  useEffect(() => {
+    window.localStorage.setItem(ADDRESS_STORAGE_KEY, address);
+  }, [address]);
 
   const exportText = useMemo(() => {
     if (report === null || report.rows.length === 0) {
@@ -29,6 +39,12 @@ export function ReportPage(): JSX.Element {
   }, [report]);
 
   async function handleSubmit(): Promise<void> {
+    if (!MONTH_PATTERN.test(month)) {
+      setMonthError("Choose a report month in YYYY-MM format.");
+      return;
+    }
+
+    setMonthError(null);
     const { isAddress } = await import("ethers");
     if (!isAddress(address)) {
       setAddressError("Enter a valid Ethereum-style wallet address.");
@@ -50,14 +66,13 @@ export function ReportPage(): JSX.Element {
         <Flex direction="column" gap="5">
           <header className="hero-card">
             <Text as="p" size="2" weight="bold" className="eyebrow">
-              Warsaw-time ledger
+              Monthly export
             </Text>
-            <Heading size="9" className="hero-heading">
-              ZK to PLN monthly accountant report
+            <Heading size="8" className="hero-heading">
+              ZK PLN report
             </Heading>
             <Text as="p" size="4" className="hero-copy">
-              Generate a clean month-by-month ledger of incoming ZK receipts on zkSync Era with
-              CoinGecko USD pricing and NBP USD/PLN conversion.
+              Generate an accountant-ready report for incoming ZK receipts on zkSync Era.
             </Text>
           </header>
           <ReportFilters
@@ -65,6 +80,7 @@ export function ReportPage(): JSX.Element {
             addressError={addressError}
             loading={status === "loading"}
             month={month}
+            monthError={monthError}
             network={network}
             token={token}
             onAddressChange={setAddress}
@@ -76,6 +92,7 @@ export function ReportPage(): JSX.Element {
           <ReportStatus
             errorMessage={errorMessage}
             loading={status === "loading"}
+            progress={progress}
             showEmpty={status === "success" && report !== null && report.rows.length === 0}
           />
           {report === null || report.rows.length === 0 ? null : (

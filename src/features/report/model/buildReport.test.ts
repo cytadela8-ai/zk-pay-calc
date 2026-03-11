@@ -6,7 +6,7 @@ import type { FxRateSample } from "src/lib/fx";
 import type { PriceSample } from "src/lib/pricing";
 
 const zkToken: SupportedToken = {
-  address: "0x5A7d6b2F92C77FAD6CCAbd7Ee0624E64907eaF3E",
+  address: "0x5A7d6b2F92C77FAD6CCaBd7EE0624E64907Eaf3E",
   coingeckoCoinId: "zksync",
   decimals: 18,
   symbol: "ZK",

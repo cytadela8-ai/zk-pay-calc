@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { MonthlyReport } from "src/domain/report";
+import type { MonthlyReport, ReportProgress } from "src/domain/report";
 
 interface GenerateReportInput {
   month: string;
@@ -15,6 +15,7 @@ interface ReportGeneratorState {
   status: ReportStatus;
   report: MonthlyReport | null;
   errorMessage: string | null;
+  progress: ReportProgress | null;
 }
 
 interface ReportGeneratorResult extends ReportGeneratorState {
@@ -29,6 +30,7 @@ interface ReportGeneratorResult extends ReportGeneratorState {
 export function useReportGenerator(): ReportGeneratorResult {
   const [state, setState] = useState<ReportGeneratorState>({
     errorMessage: null,
+    progress: null,
     report: null,
     status: "idle",
   });
@@ -36,15 +38,29 @@ export function useReportGenerator(): ReportGeneratorResult {
   async function generate(input: GenerateReportInput): Promise<void> {
     setState({
       errorMessage: null,
+      progress: {
+        currentStep: 1,
+        label: "Preparing report range",
+        totalSteps: 5,
+      },
       report: null,
       status: "loading",
     });
 
     try {
       const { generateMonthlyReport } = await import("src/features/report/model/generateReport");
-      const report = await generateMonthlyReport(input);
+      const report = await generateMonthlyReport({
+        ...input,
+        onProgress: (progress) => {
+          setState((currentState) => ({
+            ...currentState,
+            progress,
+          }));
+        },
+      });
       setState({
         errorMessage: null,
+        progress: null,
         report,
         status: "success",
       });
@@ -52,6 +68,7 @@ export function useReportGenerator(): ReportGeneratorResult {
       const message = error instanceof Error ? error.message : "Unknown error.";
       setState({
         errorMessage: `Report generation failed: ${message}`,
+        progress: null,
         report: null,
         status: "error",
       });

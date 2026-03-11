@@ -8,6 +8,7 @@ interface ReportFiltersProps {
   addressError: string | null;
   loading: boolean;
   month: string;
+  monthError: string | null;
   network: SupportedNetwork;
   token: SupportedToken;
   onAddressChange: (value: string) => void;
@@ -72,6 +73,11 @@ export function ReportFilters(props: ReportFiltersProps): JSX.Element {
             </select>
           </label>
         </div>
+        {props.monthError === null ? null : (
+          <Text as="p" size="2" className="error-copy">
+            {props.monthError}
+          </Text>
+        )}
         {props.addressError === null ? null : (
           <Text as="p" size="2" className="error-copy">
             {props.addressError}

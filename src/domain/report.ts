@@ -44,3 +44,9 @@ export interface MonthlyReport {
   rows: ReportRow[];
   summary: ReportSummary;
 }
+
+export interface ReportProgress {
+  currentStep: number;
+  totalSteps: number;
+  label: string;
+}
