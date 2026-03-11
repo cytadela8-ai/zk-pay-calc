@@ -1,0 +1,66 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+
+:root {
+  --paper: #f6f0e1;
+  --ink: #2d2417;
+  --accent: #9b6b1b;
+  --rule: rgba(91, 70, 32, 0.2);
+  --panel: rgba(255, 252, 245, 0.8);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.65), transparent 40%),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 31px,
+      var(--rule) 31px,
+      var(--rule) 32px
+    ),
+    var(--paper);
+  color: var(--ink);
+  font-family: "IBM Plex Mono", monospace;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at top left, rgba(155, 107, 27, 0.16), transparent 38%),
+    radial-gradient(circle at bottom right, rgba(57, 42, 18, 0.08), transparent 34%);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.eyebrow,
+.hero-copy {
+  max-width: 38rem;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+}
+
+.hero-heading {
+  font-family: "Cormorant Garamond", serif;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+.hero-copy {
+  color: rgba(45, 36, 23, 0.72);
+}
